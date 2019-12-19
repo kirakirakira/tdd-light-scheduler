@@ -11,7 +11,8 @@
 
 static TimeSourceTickCount_t GetTicks(I_TimeSource_t *timeSource)
 {
-   return mock().actualCall("GetTicks")
+   return mock()
+      .actualCall("GetTicks")
       .onObject((void *)timeSource)
       .returnValue().getIntValue();
 }

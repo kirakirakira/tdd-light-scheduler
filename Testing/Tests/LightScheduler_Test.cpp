@@ -26,15 +26,56 @@ TEST_GROUP(LightScheduler)
       DigitalOutputGroup_Mock_Init(&fakeDigitalOutputGroup);
       TimeSource_Mock_Init(&fakeTimeSource);
 
-//      LightScheduler_Init(&scheduler, (I_DigitalOutputGroup_t *)&fakeDigitalOutputGroup, (I_TimeSource_t *)&fakeTimeSource);
+      LightScheduler_Init(&scheduler, (I_DigitalOutputGroup_t *)&fakeDigitalOutputGroup, (I_TimeSource_t *)&fakeTimeSource);
    }
 
-   void teardown()
+   void LightShouldBeTurnedOn(uint8_t which)
    {
+      mock()
+          .expectOneCall("Write")
+          .onObject(&fakeDigitalOutputGroup)
+          .withParameter("channel", which)
+          .withParameter("state", true);
+   }
+
+   void WhenTheTimeIs(TimeSourceTickCount_t time)
+   {
+      mock()
+          .expectOneCall("GetTicks")
+          .onObject(&fakeTimeSource)
+          .andReturnValue(time);
+   }
+
+   void NothingShouldHappen()
+   {
+   }
+
+   void WhenTheLightSchedulerIsRunAtTime(TimeSourceTickCount_t time)
+   {
+      WhenTheTimeIs(time);
+      LightScheduler_Run(&scheduler);
+   }
+
+   void WhenTheLightSchedulerIsRun()
+   {
+      WhenTheTimeIs(0);
+      LightScheduler_Run(&scheduler);
    }
 };
 
-TEST(LightScheduler, FirstTest)
+TEST(LightScheduler, ShouldNotDoAnythingIfWeDontSetAnySchedules)
 {
-   FAIL("Oh good the tests are working");
+   NothingShouldHappen();
+   WhenTheLightSchedulerIsRun();
+}
+
+TEST(LightScheduler, ShouldRunASchedule)
+{
+   LightScheduler_AddSchedule(&scheduler, 3, true, 12);
+
+   NothingShouldHappen();
+   WhenTheLightSchedulerIsRunAtTime(11);
+
+   LightShouldBeTurnedOn(3);
+   WhenTheLightSchedulerIsRunAtTime(12);
 }

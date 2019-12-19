@@ -8,7 +8,8 @@
 
 static void Write(I_DigitalOutputGroup_t *instance, const DigitalOutputChannel_t channel, const bool state)
 {
-   mock().actualCall("Write")
+   mock()
+      .actualCall("Write")
       .onObject(instance)
       .withParameter("channel", channel)
       .withParameter("state", state);
