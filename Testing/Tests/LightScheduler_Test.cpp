@@ -38,6 +38,15 @@ TEST_GROUP(LightScheduler)
           .withParameter("state", true);
    }
 
+   void LightShouldBeTurnedOff(uint8_t which)
+   {
+      mock()
+          .expectOneCall("Write")
+          .onObject(&fakeDigitalOutputGroup)
+          .withParameter("channel", which)
+          .withParameter("state", false);
+   }
+
    void WhenTheTimeIs(TimeSourceTickCount_t time)
    {
       mock()
@@ -79,3 +88,35 @@ TEST(LightScheduler, ShouldRunASchedule)
    LightShouldBeTurnedOn(3);
    WhenTheLightSchedulerIsRunAtTime(12);
 }
+
+TEST(LightScheduler, ShouldRunTwoSchedules)
+{
+   LightScheduler_AddSchedule(&scheduler, 3, true, 12);
+   LightScheduler_AddSchedule(&scheduler, 4, true, 13);
+
+   NothingShouldHappen();
+   WhenTheLightSchedulerIsRunAtTime(11);
+
+   LightShouldBeTurnedOn(3);
+   WhenTheLightSchedulerIsRunAtTime(12);
+
+   LightShouldBeTurnedOn(4);
+   WhenTheLightSchedulerIsRunAtTime(13);
+}
+
+TEST(LightScheduler, ShouldTurnOnAndOffSameLightWithTwoSchedules)
+{
+   LightScheduler_AddSchedule(&scheduler, 3, true, 12);
+   LightScheduler_AddSchedule(&scheduler, 3, false, 13);
+
+   NothingShouldHappen();
+   WhenTheLightSchedulerIsRunAtTime(11);
+
+   LightShouldBeTurnedOn(3);
+   WhenTheLightSchedulerIsRunAtTime(12);
+
+   LightShouldBeTurnedOff(3);
+   WhenTheLightSchedulerIsRunAtTime(13);
+}
+
+

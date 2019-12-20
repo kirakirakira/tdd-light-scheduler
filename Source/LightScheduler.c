@@ -15,23 +15,24 @@ void LightScheduler_Init(LightScheduler_t *instance, I_DigitalOutputGroup_t *lig
 
 void LightScheduler_AddSchedule(LightScheduler_t *instance, uint8_t lightId, bool lightState, TimeSourceTickCount_t time)
 {
-    // if(schedule_counter < MAX_SCHEDULES) {
-    instance->schedules[0].active = true;
-    instance->schedules[0].lightId = lightId;
-    instance->schedules[0].lightState = lightState;
-    instance->schedules[0].time = time;
-    // schedule_counter++;
-    // }
+    uint8_t schedulesSize = sizeof(instance->schedules)/ sizeof(instance->schedules[0]);
+    if(instance->numSchedulesAdded < schedulesSize) {
+        instance->schedules[instance->numSchedulesAdded].active = true;
+        instance->schedules[instance->numSchedulesAdded].lightId = lightId;
+        instance->schedules[instance->numSchedulesAdded].lightState = lightState;
+        instance->schedules[instance->numSchedulesAdded].time = time;
+        instance->numSchedulesAdded++;
+    }
 }
 
 void LightScheduler_Run(LightScheduler_t *instance)
 {
     TimeSourceTickCount_t time = TimeSource_GetTicks(instance->timeSource);
-
-    // for(uint8_t i = 0; i < MAX_SCHEDULES; i++) {
-    if ((time == instance->schedules[0].time) && (instance->schedules[0].active))
-    {
-        DigitalOutputGroup_Write(instance->lights, instance->schedules[0].lightId, instance->schedules[0].lightState);
+    uint8_t schedulesSize = sizeof(instance->schedules)/ sizeof(instance->schedules[0]);
+    for(uint8_t i = 0; i < schedulesSize; i++) {
+        if ((time == instance->schedules[i].time) && (instance->schedules[i].active))
+        {
+            DigitalOutputGroup_Write(instance->lights, instance->schedules[i].lightId, instance->schedules[i].lightState);
+        }
     }
-    // }
 }
