@@ -25,6 +25,7 @@ typedef struct
 
 typedef struct
 {
+   uint8_t maxSchedules;
    Schedule_t schedules[MAX_SCHEDULES];
    I_DigitalOutputGroup_t *lights;
    I_TimeSource_t *timeSource;
@@ -55,5 +56,15 @@ void LightScheduler_AddSchedule(LightScheduler_t *instance, uint8_t lightId, boo
  * @param instance The light scheduler.
  */
 void LightScheduler_Run(LightScheduler_t *instance);
+
+/*!
+ * Remove a light schedule.
+ * @param instance The light scheduler.
+ * @param lightId The light ID that will be controlled by the scheduler.
+ * @param lightState The state that will be written for the light (on/off).
+ * @param time The light will be controlled when the time from the TimeSource reaches this value.
+ *    The lightState should be written to the light with lightId at this time.
+ */
+void LightScheduler_RemoveSchedule(LightScheduler_t *instance, uint8_t lightId, bool lightState, TimeSourceTickCount_t time);
 
 #endif

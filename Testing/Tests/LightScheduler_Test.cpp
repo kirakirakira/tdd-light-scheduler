@@ -119,4 +119,49 @@ TEST(LightScheduler, ShouldTurnOnAndOffSameLightWithTwoSchedules)
    WhenTheLightSchedulerIsRunAtTime(13);
 }
 
+TEST(LightScheduler, ShouldDoNothingAfterAddingAndRemovingSchedule)
+{
+   LightScheduler_AddSchedule(&scheduler, 3, true, 12);
+   LightScheduler_RemoveSchedule(&scheduler, 3, true, 12);
+
+   WhenTheLightSchedulerIsRunAtTime(12);
+   NothingShouldHappen();
+}
+
+TEST(LightScheduler, ShouldDoNothingAfterRemovingScheduleThatDoesntExist)
+{
+   LightScheduler_RemoveSchedule(&scheduler, 3, true, 12);
+
+   WhenTheLightSchedulerIsRunAtTime(12);
+   NothingShouldHappen();
+}
+
+// TEST(LightScheduler, ShouldNotRunMoreThanMaxSchedules) {
+//    LightScheduler_AddSchedule(&scheduler, 1, true, 13);
+//    LightScheduler_AddSchedule(&scheduler, 2, true, 13);
+//    LightScheduler_AddSchedule(&scheduler, 3, true, 13);
+//    LightScheduler_AddSchedule(&scheduler, 4, true, 13);
+//    LightScheduler_AddSchedule(&scheduler, 5, true, 13);
+//    LightScheduler_AddSchedule(&scheduler, 6, true, 13);
+//    LightScheduler_AddSchedule(&scheduler, 7, true, 13);
+//    LightScheduler_AddSchedule(&scheduler, 8, true, 13);
+//    LightScheduler_AddSchedule(&scheduler, 9, true, 13);
+//    LightScheduler_AddSchedule(&scheduler, 10, true, 13);
+//    LightScheduler_AddSchedule(&scheduler, 11, true, 13);
+
+//    LightShouldBeTurnedOn(1);
+//    LightShouldBeTurnedOn(2);
+//    LightShouldBeTurnedOn(3);
+//    LightShouldBeTurnedOn(4);
+//    LightShouldBeTurnedOn(5);
+//    LightShouldBeTurnedOn(6);
+//    LightShouldBeTurnedOn(7);
+//    LightShouldBeTurnedOn(8);
+//    LightShouldBeTurnedOn(9);
+//    LightShouldBeTurnedOn(10);
+//    LightShouldBeTurnedOn(11);
+
+//    WhenTheLightSchedulerIsRunAtTime(13);
+// }
+
 

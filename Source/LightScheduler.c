@@ -25,6 +25,20 @@ void LightScheduler_AddSchedule(LightScheduler_t *instance, uint8_t lightId, boo
     }
 }
 
+void LightScheduler_RemoveSchedule(LightScheduler_t *instance, uint8_t lightId, bool lightState, TimeSourceTickCount_t time)
+{
+    uint8_t schedulesSize = sizeof(instance->schedules)/ sizeof(instance->schedules[0]);
+    for(uint8_t i = 0; i < schedulesSize; i++) {
+        if(instance->schedules[i].active == true &&
+           instance->schedules[i].lightId == lightId &&
+           instance->schedules[i].lightState == lightState &&
+           instance->schedules[i].time == time)
+           {
+               instance->schedules[i].active = false;
+           }
+    }
+}
+
 void LightScheduler_Run(LightScheduler_t *instance)
 {
     TimeSourceTickCount_t time = TimeSource_GetTicks(instance->timeSource);
