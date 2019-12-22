@@ -29,7 +29,6 @@ typedef struct
    Schedule_t schedules[MAX_SCHEDULES];
    I_DigitalOutputGroup_t *lights;
    I_TimeSource_t *timeSource;
-   uint8_t numSchedulesAdded;
 } LightScheduler_t;
 
 /*!

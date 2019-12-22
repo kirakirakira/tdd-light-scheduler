@@ -136,32 +136,122 @@ TEST(LightScheduler, ShouldDoNothingAfterRemovingScheduleThatDoesntExist)
    NothingShouldHappen();
 }
 
-// TEST(LightScheduler, ShouldNotRunMoreThanMaxSchedules) {
-//    LightScheduler_AddSchedule(&scheduler, 1, true, 13);
-//    LightScheduler_AddSchedule(&scheduler, 2, true, 13);
-//    LightScheduler_AddSchedule(&scheduler, 3, true, 13);
-//    LightScheduler_AddSchedule(&scheduler, 4, true, 13);
-//    LightScheduler_AddSchedule(&scheduler, 5, true, 13);
-//    LightScheduler_AddSchedule(&scheduler, 6, true, 13);
-//    LightScheduler_AddSchedule(&scheduler, 7, true, 13);
-//    LightScheduler_AddSchedule(&scheduler, 8, true, 13);
-//    LightScheduler_AddSchedule(&scheduler, 9, true, 13);
-//    LightScheduler_AddSchedule(&scheduler, 10, true, 13);
-//    LightScheduler_AddSchedule(&scheduler, 11, true, 13);
+TEST(LightScheduler, ShouldRunMultipleSchedulesForSameLight) {
+   LightScheduler_AddSchedule(&scheduler, 1, true, 6);
+   LightScheduler_AddSchedule(&scheduler, 1, false, 8);
+   LightScheduler_AddSchedule(&scheduler, 1, true, 10);
 
-//    LightShouldBeTurnedOn(1);
-//    LightShouldBeTurnedOn(2);
-//    LightShouldBeTurnedOn(3);
-//    LightShouldBeTurnedOn(4);
-//    LightShouldBeTurnedOn(5);
-//    LightShouldBeTurnedOn(6);
-//    LightShouldBeTurnedOn(7);
-//    LightShouldBeTurnedOn(8);
-//    LightShouldBeTurnedOn(9);
-//    LightShouldBeTurnedOn(10);
-//    LightShouldBeTurnedOn(11);
+   LightShouldBeTurnedOn(1);
+   WhenTheLightSchedulerIsRunAtTime(6);
 
-//    WhenTheLightSchedulerIsRunAtTime(13);
-// }
+   LightShouldBeTurnedOff(1);
+   WhenTheLightSchedulerIsRunAtTime(8);
+
+   LightShouldBeTurnedOn(1);
+   WhenTheLightSchedulerIsRunAtTime(10);
+}
+
+TEST(LightScheduler, ShouldTurnOnAfterAddingRemovingandAddingSameScheduleAgain)
+{
+   LightScheduler_AddSchedule(&scheduler, 3, true, 12);
+   LightScheduler_RemoveSchedule(&scheduler, 3, true, 12);
+   LightScheduler_AddSchedule(&scheduler, 3, true, 12);
+
+   LightShouldBeTurnedOn(3);
+   WhenTheLightSchedulerIsRunAtTime(12);
+}
+
+TEST(LightScheduler, ShouldDoNothingAfterRunningAtWrongTime)
+{
+   LightScheduler_AddSchedule(&scheduler, 3, true, 13);
+
+   WhenTheLightSchedulerIsRunAtTime(12);
+   NothingShouldHappen();
+}
+
+TEST(LightScheduler, ShouldRunTheMaxNumberOfSchedules)
+{
+   LightScheduler_AddSchedule(&scheduler, 1, true, 13);
+   LightScheduler_AddSchedule(&scheduler, 2, true, 13);
+   LightScheduler_AddSchedule(&scheduler, 3, true, 13);
+   LightScheduler_AddSchedule(&scheduler, 4, true, 13);
+   LightScheduler_AddSchedule(&scheduler, 5, true, 13);
+   LightScheduler_AddSchedule(&scheduler, 6, true, 13);
+   LightScheduler_AddSchedule(&scheduler, 7, true, 13);
+   LightScheduler_AddSchedule(&scheduler, 8, true, 13);
+   LightScheduler_AddSchedule(&scheduler, 9, true, 13);
+   LightScheduler_AddSchedule(&scheduler, 10, true, 13);
+
+   LightShouldBeTurnedOn(1);
+   LightShouldBeTurnedOn(2);
+   LightShouldBeTurnedOn(3);
+   LightShouldBeTurnedOn(4);
+   LightShouldBeTurnedOn(5);
+   LightShouldBeTurnedOn(6);
+   LightShouldBeTurnedOn(7);
+   LightShouldBeTurnedOn(8);
+   LightShouldBeTurnedOn(9);
+   LightShouldBeTurnedOn(10);
+
+   WhenTheLightSchedulerIsRunAtTime(13);
+}
+
+TEST(LightScheduler, ShouldFillInEmptySpotWithScheduleAndRun)
+{
+   LightScheduler_AddSchedule(&scheduler, 1, true, 13);
+   LightScheduler_AddSchedule(&scheduler, 2, true, 13);
+   LightScheduler_AddSchedule(&scheduler, 3, true, 13);
+   LightScheduler_AddSchedule(&scheduler, 4, true, 13);
+   LightScheduler_AddSchedule(&scheduler, 5, true, 13);
+   LightScheduler_AddSchedule(&scheduler, 6, true, 13);
+   LightScheduler_AddSchedule(&scheduler, 7, true, 13);
+   LightScheduler_AddSchedule(&scheduler, 8, true, 13);
+   LightScheduler_AddSchedule(&scheduler, 9, true, 13);
+   LightScheduler_AddSchedule(&scheduler, 10, true, 13);
+
+   LightScheduler_RemoveSchedule(&scheduler, 4, true, 13);
+   LightScheduler_AddSchedule(&scheduler, 6, false, 14);
+
+   LightShouldBeTurnedOn(1);
+   LightShouldBeTurnedOn(2);
+   LightShouldBeTurnedOn(3);
+   LightShouldBeTurnedOn(5);
+   LightShouldBeTurnedOn(6);
+   LightShouldBeTurnedOn(7);
+   LightShouldBeTurnedOn(8);
+   LightShouldBeTurnedOn(9);
+   LightShouldBeTurnedOn(10);
+   WhenTheLightSchedulerIsRunAtTime(13);
+
+   LightShouldBeTurnedOff(6);
+   WhenTheLightSchedulerIsRunAtTime(14);
+}
+
+TEST(LightScheduler, ShouldNotRunMoreThanMaxSchedules) {
+   LightScheduler_AddSchedule(&scheduler, 1, true, 13);
+   LightScheduler_AddSchedule(&scheduler, 2, true, 13);
+   LightScheduler_AddSchedule(&scheduler, 3, true, 13);
+   LightScheduler_AddSchedule(&scheduler, 4, true, 13);
+   LightScheduler_AddSchedule(&scheduler, 5, true, 13);
+   LightScheduler_AddSchedule(&scheduler, 6, true, 13);
+   LightScheduler_AddSchedule(&scheduler, 7, true, 13);
+   LightScheduler_AddSchedule(&scheduler, 8, true, 13);
+   LightScheduler_AddSchedule(&scheduler, 9, true, 13);
+   LightScheduler_AddSchedule(&scheduler, 10, true, 13);
+   LightScheduler_AddSchedule(&scheduler, 11, true, 13);
+
+   LightShouldBeTurnedOn(1);
+   LightShouldBeTurnedOn(2);
+   LightShouldBeTurnedOn(3);
+   LightShouldBeTurnedOn(4);
+   LightShouldBeTurnedOn(5);
+   LightShouldBeTurnedOn(6);
+   LightShouldBeTurnedOn(7);
+   LightShouldBeTurnedOn(8);
+   LightShouldBeTurnedOn(9);
+   LightShouldBeTurnedOn(10);
+
+   WhenTheLightSchedulerIsRunAtTime(13);
+}
 
 

@@ -16,15 +16,18 @@ void LightScheduler_Init(LightScheduler_t *instance, I_DigitalOutputGroup_t *lig
 void LightScheduler_AddSchedule(LightScheduler_t *instance, uint8_t lightId, bool lightState, TimeSourceTickCount_t time)
 {
     uint8_t schedulesSize = sizeof(instance->schedules)/ sizeof(instance->schedules[0]);
-    if(instance->numSchedulesAdded < schedulesSize) {
-        instance->schedules[instance->numSchedulesAdded].active = true;
-        instance->schedules[instance->numSchedulesAdded].lightId = lightId;
-        instance->schedules[instance->numSchedulesAdded].lightState = lightState;
-        instance->schedules[instance->numSchedulesAdded].time = time;
-        instance->numSchedulesAdded++;
+    for(uint8_t i = 0; i < schedulesSize; i++) {
+        if(instance->schedules[i].active == false) {
+            instance->schedules[i].active = true;
+            instance->schedules[i].lightId = lightId;
+            instance->schedules[i].lightState = lightState;
+            instance->schedules[i].time = time;
+            break;
+        }
     }
 }
 
+// this doesn't remove it, it just marks it inactive
 void LightScheduler_RemoveSchedule(LightScheduler_t *instance, uint8_t lightId, bool lightState, TimeSourceTickCount_t time)
 {
     uint8_t schedulesSize = sizeof(instance->schedules)/ sizeof(instance->schedules[0]);
